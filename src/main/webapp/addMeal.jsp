@@ -1,5 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:if test="meal != null">
+    <jsp:useBean id="meal" scope="request" type="ru.javawebinar.topjava.model.Meal"/>
+</c:if>
 <html>
 <head>
     <title>${meal==null ? 'Add meal' : 'Edit meal'}</title>
@@ -24,20 +27,20 @@
             <tr>
                 <td><label for="date">DateTime: </label></td>
                 <td>
-                    <input type="hidden" name="id" value="<c:out value="${meal.id}"/>">
-                    <input type="datetime-local" name="dateTime" id="date" value="<c:out value="${meal.dateTime}"/>"/>
+                    <input type="hidden" name="id" value="${meal.id}">
+                    <input type="datetime-local" name="dateTime" id="date" value="${meal.dateTime}"/>
                 </td>
             </tr>
             <tr>
                 <td><label for="desc">Description: </label></td>
                 <td>
-                    <input type="text" style="width: 300pt" name="description" id="desc" value="<c:out value="${meal.description}"/>"/>
+                    <input type="text" style="width: 300pt" name="description" id="desc" value="${meal.description}"/>
                 </td>
             </tr>
             <tr>
                 <td><label for="cal">Calories: </label></td>
                 <td>
-                    <input type="text" name="calories" id="cal" value="<c:out value="${meal.calories}"/>"/>
+                    <input type="number" name="calories" id="cal" value="${meal.calories}"/>
                 </td>
             </tr>
             <tr>

@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib  prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<jsp:useBean id="mealsTo" scope="request" type="java.util.List"/>
 <html>
 <head>
     <title>Meals</title>
@@ -27,7 +28,7 @@
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
-    <p><a href="addMeal?action=add">Add meal</a></p>
+    <p><a href="meals?action=add">Add meal</a></p>
     <table>
         <thead>
             <tr>
@@ -46,16 +47,16 @@
                         <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${parsedDateTime}" />
                     </td>
                     <td>
-                        <c:out value="${mealTo.description}"/>
+                        ${mealTo.description}
                     </td>
                     <td>
-                        <c:out value="${mealTo.calories}"/>
+                        ${mealTo.calories}
                     </td>
                     <td>
-                        <a href="meals?action=edit&id=<c:out value="${mealTo.id}"/>">Update</a>
+                        <a href="meals?action=edit&id=${mealTo.id}">Update</a>
                     </td>
                     <td>
-                        <a href="meals?action=delete&id=<c:out value="${mealTo.id}"/>">Delete</a>
+                        <a href="meals?action=delete&id=${mealTo.id}">Delete</a>
                     </td>
                 </tr>
             </c:forEach>
