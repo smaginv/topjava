@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.util;
 
-import ru.javawebinar.topjava.dao.MealDAOInMemory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
 
@@ -8,18 +7,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MealsUtil {
-    private static final int EXCESS_CALORIES_VALUE = 2000;
-
-    public static int getExcessCaloriesValue() {
-        return EXCESS_CALORIES_VALUE;
-    }
+    public static final int EXCESS_CALORIES_VALUE = 2000;
 
     public static void main(String[] args) {
         List<Meal> meals = Arrays.asList(

@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MealDAOInMemory implements Dao<Meal> {
+public class InMemoryMealDao implements Dao<Meal> {
     private final AtomicInteger countId = new AtomicInteger(0);
     private final Map<Integer, Meal> meals = new ConcurrentHashMap<>();
 
@@ -35,17 +35,20 @@ public class MealDAOInMemory implements Dao<Meal> {
     @Override
     public synchronized Meal save(Meal meal) {
         Integer id = meal.getId();
-        if (id != null && meals.containsKey(id)) {
+        if (id != null && !meals.containsKey(id)) {
+            return null;
+        } else if (id != null && meals.containsKey(id)) {
             meals.replace(id, meal);
         } else {
-            meal.setId(countId.get());
-            meals.put(countId.getAndIncrement(), meal);
+            id = countId.getAndIncrement();
+            meal.setId(id);
+            meals.put(id, meal);
         }
         return meal;
     }
 
     @Override
-    public boolean delete(int id) {
+    public synchronized boolean delete(int id) {
         return meals.remove(id) != null;
     }
 }
