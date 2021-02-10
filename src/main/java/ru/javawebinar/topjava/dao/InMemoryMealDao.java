@@ -33,22 +33,20 @@ public class InMemoryMealDao implements Dao<Meal> {
     }
 
     @Override
-    public synchronized Meal save(Meal meal) {
+    public Meal save(Meal meal) {
         Integer id = meal.getId();
-        if (id != null && !meals.containsKey(id)) {
-            return null;
-        } else if (id != null && meals.containsKey(id)) {
-            meals.replace(id, meal);
-        } else {
+        if (id == null) {
             id = countId.getAndIncrement();
             meal.setId(id);
             meals.put(id, meal);
+            return meal;
+        } else {
+            return meals.replace(id, meal) == null ? null : meal;
         }
-        return meal;
     }
 
     @Override
-    public synchronized boolean delete(int id) {
+    public boolean delete(int id) {
         return meals.remove(id) != null;
     }
 }

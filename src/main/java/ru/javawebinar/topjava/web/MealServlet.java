@@ -69,11 +69,8 @@ public class MealServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("dateTime"));
-
         String description = request.getParameter("description");
-
         int calories = Integer.parseInt(request.getParameter("calories"));
-
         String idString = request.getParameter("id");
         if (idString == null || idString.isEmpty()) {
             Meal meal = dao.save(new Meal(dateTime, description, calories));
