@@ -1,8 +1,65 @@
 package ru.javawebinar.topjava.web.meal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
+import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.MealsUtil;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
+import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
+import static ru.javawebinar.topjava.web.SecurityUtil.authUserCaloriesPerDay;
+import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
+
+@Controller
 public class MealRestController {
-    private MealService service;
+    private static final Logger logg = LoggerFactory.getLogger(MealRestController.class);
+    private final MealService service;
 
+    public MealRestController(MealService service) {
+        this.service = service;
+    }
+
+    public List<MealTo> getAll() {
+        logg.info("getAll");
+        return MealsUtil.getTos(service.getAll(authUserId()), authUserCaloriesPerDay());
+    }
+
+    public List<MealTo> getAll(String startDate, String endDate, String startTime, String endTime) {
+        logg.info("getAllWithFilter");
+        return MealsUtil.getFilteredTos(service.getAll(authUserId(),
+                startDate.isEmpty() ? LocalDate.ofEpochDay(0) : LocalDate.parse(startDate),
+                endDate.isEmpty() ? LocalDate.ofEpochDay(LocalDate.now().toEpochDay()) : LocalDate.parse(endDate)),
+                authUserCaloriesPerDay(),
+                startTime.isEmpty() ? LocalTime.MIN : LocalTime.parse(startTime),
+                endTime.isEmpty() ? LocalTime.MAX : LocalTime.parse(endTime));
+    }
+
+    public Meal get(int id) {
+        logg.info("get {}", id);
+        return service.get(id, authUserId());
+    }
+
+    public Meal create(Meal meal) {
+        logg.info("create {}", meal);
+        checkNew(meal);
+        return service.create(meal, authUserId());
+    }
+
+    public void update(Meal meal, int id) {
+        logg.info("update {}", meal);
+        assureIdConsistent(meal, id);
+        service.update(meal, authUserId());
+    }
+
+    public void delete(int id) {
+        logg.info("delete {}", id);
+        service.delete(id, authUserId());
+    }
 }

@@ -1,7 +1,7 @@
 package ru.javawebinar.topjava.util;
 
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.MealTo;
+import ru.javawebinar.topjava.to.MealTo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,12 +27,22 @@ public class MealsUtil {
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
     );
 
+    public static final List<Meal> meals2 = Arrays.asList(
+            new Meal(LocalDateTime.of(2021, Month.FEBRUARY, 13, 10, 0), "Завтрак", 500),
+            new Meal(LocalDateTime.of(2021, Month.FEBRUARY, 13, 13, 0), "Обед", 1000),
+            new Meal(LocalDateTime.of(2021, Month.FEBRUARY, 13, 20, 0), "Ужин", 600),
+            new Meal(LocalDateTime.of(2021, Month.FEBRUARY, 14, 10, 0), "Завтрак", 1000),
+            new Meal(LocalDateTime.of(2021, Month.FEBRUARY, 14, 13, 0), "Обед", 500),
+            new Meal(LocalDateTime.of(2021, Month.FEBRUARY, 14, 20, 0), "Ужин", 500)
+    );
+
     public static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay) {
         return filterByPredicate(meals, caloriesPerDay, meal -> true);
     }
 
     public static List<MealTo> getFilteredTos(Collection<Meal> meals, int caloriesPerDay, LocalTime startTime, LocalTime endTime) {
-        return filterByPredicate(meals, caloriesPerDay, meal -> DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime));
+        return filterByPredicate(meals, caloriesPerDay, meal -> DateTimeUtil.isBetweenHalfOpen(meal.getTime().toNanoOfDay(),
+                startTime.toNanoOfDay(), endTime.toNanoOfDay()));
     }
 
     public static List<MealTo> filterByPredicate(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter) {
