@@ -31,14 +31,14 @@ public class MealRestController {
         return MealsUtil.getTos(service.getAll(authUserId()), authUserCaloriesPerDay());
     }
 
-    public List<MealTo> getAll(String startDate, String endDate, String startTime, String endTime) {
+    public List<MealTo> getAllWithFilter(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         logg.info("getAllWithFilter");
-        return MealsUtil.getFilteredTos(service.getAll(authUserId(),
-                startDate.isEmpty() ? LocalDate.ofEpochDay(0) : LocalDate.parse(startDate),
-                endDate.isEmpty() ? LocalDate.ofEpochDay(LocalDate.now().toEpochDay()) : LocalDate.parse(endDate)),
+        return MealsUtil.getFilteredTos(service.getAllWithFilter(authUserId(),
+                startDate == null ? LocalDate.MIN : startDate,
+                endDate == null ? LocalDate.MAX : endDate),
                 authUserCaloriesPerDay(),
-                startTime.isEmpty() ? LocalTime.MIN : LocalTime.parse(startTime),
-                endTime.isEmpty() ? LocalTime.MAX : LocalTime.parse(endTime));
+                startTime == null ? LocalTime.MIN : startTime,
+                endTime == null ? LocalTime.MAX : endTime);
     }
 
     public Meal get(int id) {

@@ -15,6 +15,9 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
+import static ru.javawebinar.topjava.util.DateTimeUtil.toLocalDate;
+import static ru.javawebinar.topjava.util.DateTimeUtil.toLocalTime;
+
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
     private ClassPathXmlApplicationContext context;
@@ -72,11 +75,11 @@ public class MealServlet extends HttpServlet {
                 break;
             case "filter":
                 log.info("getAllWithFilter");
-                request.setAttribute("meals", controller.getAll(
-                        request.getParameter("startDate"),
-                        request.getParameter("endDate"),
-                        request.getParameter("startTime"),
-                        request.getParameter("endTime")));
+                request.setAttribute("meals", controller.getAllWithFilter(
+                        toLocalDate(request.getParameter("startDate")),
+                        toLocalDate(request.getParameter("endDate")),
+                        toLocalTime(request.getParameter("startTime")),
+                        toLocalTime(request.getParameter("endTime"))));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
             case "all":

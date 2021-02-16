@@ -23,8 +23,8 @@ public class MealService {
         return new ArrayList<>(repository.getAll(userId));
     }
 
-    public List<Meal> getAll(int userId, LocalDate startDate, LocalDate endDate) {
-        return new ArrayList<>(repository.getAll(userId, startDate, endDate));
+    public List<Meal> getAllWithFilter(int userId, LocalDate startDate, LocalDate endDate) {
+        return new ArrayList<>(repository.getAllWithFilter(userId, startDate, endDate));
     }
 
     public Meal get(int id, int userId) {

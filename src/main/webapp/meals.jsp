@@ -31,10 +31,10 @@
                 <td>До времени (исключая)</td>
             </tr>
             <tr>
-                <td><input type="date" name="startDate"></td>
-                <td><input type="date" name="endDate"></td>
-                <td><input type="time" name="startTime"></td>
-                <td><input type="time" name="endTime"></td>
+                <td><input type="date" value="${param.startDate}" name="startDate"></td>
+                <td><input type="date" value="${param.endDate}" name="endDate"></td>
+                <td><input type="time" value="${param.startTime}" name="startTime"></td>
+                <td><input type="time" value="${param.endTime}" name="endTime"></td>
             </tr>
         </table>
         <br>
