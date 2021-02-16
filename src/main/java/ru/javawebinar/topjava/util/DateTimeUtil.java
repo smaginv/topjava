@@ -1,14 +1,15 @@
 package ru.javawebinar.topjava.util;
 
+import org.springframework.util.StringUtils;
+
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.Temporal;
 
 public class DateTimeUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public static <T extends Temporal & Comparable<T>> boolean isBetweenHalfOpen(T lt, T startTime, T endTime) {
-        return lt.compareTo(startTime) >= 0 && lt.compareTo(endTime) < 0;
+    public static <T extends Comparable<T>> boolean isBetweenHalfOpen(T currentValue, T initialValue, T endValue) {
+        return currentValue.compareTo(initialValue) >= 0 && currentValue.compareTo(endValue) < 0;
     }
 
     public static String toString(LocalDateTime ldt) {
@@ -16,11 +17,11 @@ public class DateTimeUtil {
     }
 
     public static LocalDate toLocalDate(String ld) {
-        return ld == null || ld.isEmpty() ? null : LocalDate.parse(ld);
+        return StringUtils.hasText(ld) ? LocalDate.parse(ld) : null;
     }
 
     public static LocalTime toLocalTime(String lt) {
-        return lt == null || lt.isEmpty() ? null : LocalTime.parse(lt);
+        return StringUtils.hasText(lt) ? LocalTime.parse(lt) : null;
     }
 }
 

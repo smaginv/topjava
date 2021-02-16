@@ -26,29 +26,28 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Meal save(Meal meal, int userId) {
-        Map<Integer, Meal> meals = repository.getOrDefault(userId, new ConcurrentHashMap<>());
+        Map<Integer, Meal> meals = repository.computeIfAbsent(userId, k -> new ConcurrentHashMap<>());
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             meals.put(meal.getId(), meal);
-            repository.put(userId, meals);
             return meal;
         }
         if (meals.replace(meal.getId(), meal) == null) {
             return null;
-        } else {
-            repository.put(userId, meals);
-            return meal;
         }
+        return meal;
     }
 
     @Override
     public boolean delete(int id, int userId) {
-        return repository.get(userId) != null && repository.get(userId).remove(id) != null;
+        Map<Integer, Meal> meals = repository.get(userId);
+        return meals != null && meals.remove(id) != null;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        return repository.get(userId) == null ? null : repository.get(userId).get(id);
+        Map<Integer, Meal> meals = repository.get(userId);
+        return meals == null ? null : meals.get(id);
     }
 
     @Override
@@ -58,18 +57,19 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAllWithFilter(int userId, LocalDate startDate, LocalDate endDate) {
-        return filterByPredicate(userId, meal -> isBetweenHalfOpen(meal.getDate(), startDate, checkDateAtMax(endDate)));
+        return filterByPredicate(userId, meal -> isBetweenHalfOpen(meal.getDate(), startDate, getNextDayOrMax(endDate)));
     }
 
     private List<Meal> filterByPredicate(int userId, Predicate<Meal> filter) {
-        return repository.get(userId) == null ? new ArrayList<>() :
-                repository.get(userId).values().stream()
+        Map<Integer, Meal> meals = repository.get(userId);
+        return meals == null ? Collections.emptyList() :
+                meals.values().stream()
                         .filter(filter)
                         .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                         .collect(Collectors.toList());
     }
 
-    private LocalDate checkDateAtMax(LocalDate localDate) {
+    private LocalDate getNextDayOrMax(LocalDate localDate) {
         return localDate == LocalDate.MAX ? localDate : localDate.plusDays(1);
     }
 }
