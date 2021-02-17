@@ -35,7 +35,8 @@ public class InMemoryMealRepository implements MealRepository {
             meals.put(meal.getId(), meal);
             return meal;
         }
-        log.info("update {}", meal = meals.replace(meal.getId(), meal) == null ? null : meal);
+        meal = meals.replace(meal.getId(), meal) == null ? null : meal;
+        log.info("update {}", meal);
         return meal;
     }
 
