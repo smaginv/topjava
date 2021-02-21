@@ -32,8 +32,6 @@ CREATE TABLE meals
     description VARCHAR                          NOT NULL,
     calories    INTEGER             DEFAULT 1000 NOT NULL,
     date_time   TIMESTAMP WITHOUT TIME ZONE      NOT NULL,
-    CONSTRAINT date_time_unique UNIQUE (user_id, date_time),
+    CONSTRAINT date_time_unique_to_user UNIQUE (user_id, date_time),
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
-CREATE INDEX user_id_idx ON meals (user_id);
-CREATE INDEX meals_date_time_idx ON meals (date_time);

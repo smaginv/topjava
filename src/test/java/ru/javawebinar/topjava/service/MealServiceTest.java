@@ -13,7 +13,6 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
@@ -23,7 +22,7 @@ import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 @ContextConfiguration({
-        "classpath:spring/spring-app.xml",
+        "classpath:spring/spring-app-jdbc.xml",
         "classpath:spring/spring-db.xml"
 })
 @RunWith(SpringRunner.class)
@@ -38,34 +37,21 @@ public class MealServiceTest {
 
     @Test
     public void get() {
-        Meal meal = service.get(meal2.getId(), USER_ID);
-        assertMatch(meal, meal2);
+        Meal meal = service.get(meal2_User.getId(), USER_ID);
+        assertMatch(meal, meal2_User);
     }
 
     @Test
     public void delete() {
-        service.delete(meal5.getId(), ADMIN_ID);
-        assertThrows(NotFoundException.class, () -> service.get(meal5.getId(), ADMIN_ID));
-    }
-
-    @Test
-    public void getBetweenInclusive() {
-        List<Meal> all = service.getBetweenInclusive(LocalDate.of(2021, Month.FEBRUARY, 19),
-                LocalDate.of(2021, Month.FEBRUARY, 19), USER_ID);
-        assertMatch(all, meal4, meal3, meal2);
-    }
-
-    @Test
-    public void getAll() {
-        List<Meal> all = service.getAll(ADMIN_ID);
-        assertMatch(all, meal7, meal6, meal5);
+        service.delete(meal8_Admin.getId(), ADMIN_ID);
+        assertThrows(NotFoundException.class, () -> service.get(meal8_Admin.getId(), ADMIN_ID));
     }
 
     @Test
     public void update() {
         Meal updated = getUpdated();
-        service.update(updated, ADMIN_ID);
-        assertMatch(service.get(meal7.getId(), ADMIN_ID), getUpdated());
+        service.update(updated, USER_ID);
+        assertMatch(service.get(meal7_User.getId(), USER_ID), getUpdated());
     }
 
     @Test
@@ -79,24 +65,51 @@ public class MealServiceTest {
     }
 
     @Test
+    public void getBetweenInclusive() {
+        List<Meal> all = service.getBetweenInclusive(LocalDate.of(2021, Month.FEBRUARY, 19),
+                LocalDate.of(2021, Month.FEBRUARY, 19), USER_ID);
+        assertMatch(all, meal4_User, meal3_User, meal2_User);
+    }
+
+    @Test
+    public void getAllWithNullFilter() {
+        List<Meal> all = service.getBetweenInclusive(null, null, ADMIN_ID);
+        assertMatch(all, meal13_Admin, meal12_Admin, meal11_Admin, meal10_Admin, meal9_Admin, meal8_Admin);
+    }
+
+    @Test
+    public void getAll() {
+        List<Meal> all = service.getAll(USER_ID);
+        assertMatch(all, meal7_User, meal6_User, meal5_User, meal4_User, meal3_User, meal2_User);
+    }
+
+    @Test
     public void getSomeoneMeal() {
-        assertThrows(NotFoundException.class, () -> service.get(meal7.getId(), USER_ID));
+        assertThrows(NotFoundException.class, () -> service.get(meal5_User.getId(), ADMIN_ID));
     }
 
     @Test
     public void deleteSomeoneMeal() {
-        assertThrows(NotFoundException.class, () -> service.delete(meal7.getId(), USER_ID));
+        assertThrows(NotFoundException.class, () -> service.delete(meal9_Admin.getId(), USER_ID));
     }
 
     @Test
     public void updateSomeoneMeal() {
-        assertThrows(NotFoundException.class, () -> service.update(meal7, USER_ID));
+        assertThrows(NotFoundException.class, () -> service.update(meal6_User, ADMIN_ID));
+    }
+
+    @Test
+    public void getNonexistentMeal() {
+        assertThrows(NotFoundException.class, () -> service.get(100, USER_ID));
+    }
+
+    @Test
+    public void deleteNonexistentMeal() {
+        assertThrows(NotFoundException.class, () -> service.delete(100, ADMIN_ID));
     }
 
     @Test
     public void duplicateDateTimeCreate() {
-        assertThrows(DataAccessException.class, () ->
-                service.create(new Meal(LocalDateTime.of(2021, Month.FEBRUARY, 19, 10, 0, 0),
-                        "breakfast", 500), USER_ID));
+        assertThrows(DataAccessException.class, () -> service.create(new Meal(meal3_User.getDateTime(), "breakfast", 500), USER_ID));
     }
 }
