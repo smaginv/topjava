@@ -11,13 +11,17 @@ import java.util.concurrent.TimeUnit;
 public class TestTiming {
     private static final Logger log = LoggerFactory.getLogger("");
     private static final StringBuilder result = new StringBuilder();
+    private static final String ANSI_RESET = "\u001B[0m";
+    private static final String ANSI_GREEN = "\u001B[32m";
+    private static final String ANSI_YELLOW = "\u001B[33m";
 
     public static final Stopwatch stopwatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            String result = String.format("%-25s %7d", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
+            String result = String.format(ANSI_YELLOW + "%-25s" + ANSI_GREEN + "%7d" + ANSI_RESET,
+                    description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
             TestTiming.result.append(result).append('\n');
-            log.info(result + " ms");
+            log.info(result + ANSI_GREEN + " ms" + ANSI_RESET);
         }
     };
 
@@ -29,7 +33,7 @@ public class TestTiming {
 
         @Override
         protected void after() {
-            log.info("\n" + "\nTest                 Duration, ms" +
+            log.info(ANSI_YELLOW + "\n" + "\nTest" + ANSI_GREEN + "                Duration, ms" +
                     "\n" + "\n" + result);
         }
     };
