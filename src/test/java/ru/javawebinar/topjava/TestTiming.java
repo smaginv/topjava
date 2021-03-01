@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TestTiming {
     private static final Logger log = LoggerFactory.getLogger("");
-    private static final StringBuilder result = new StringBuilder();
+    private static final StringBuilder results = new StringBuilder();
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_GREEN = "\u001B[32m";
     private static final String ANSI_YELLOW = "\u001B[33m";
@@ -20,7 +20,7 @@ public class TestTiming {
         protected void finished(long nanos, Description description) {
             String result = String.format(ANSI_YELLOW + "%-25s" + ANSI_GREEN + "%7d" + ANSI_RESET,
                     description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
-            TestTiming.result.append(result).append('\n');
+            results.append(result).append('\n');
             log.info(result + ANSI_GREEN + " ms" + ANSI_RESET);
         }
     };
@@ -28,13 +28,13 @@ public class TestTiming {
     public static final ExternalResource summary = new ExternalResource() {
         @Override
         protected void before() {
-            result.setLength(0);
+            results.setLength(0);
         }
 
         @Override
         protected void after() {
             log.info(ANSI_YELLOW + "\n" + "\nTest" + ANSI_GREEN + "                Duration, ms" +
-                    "\n" + "\n" + result);
+                    "\n" + "\n" + results);
         }
     };
 }
