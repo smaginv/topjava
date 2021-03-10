@@ -22,6 +22,11 @@ public class DataJpaMealServiceTest extends MealServiceTest {
         User user = meal.getUser();
         MEAL_MATCHER.assertMatch(meal, meal1);
         USER_MATCHER.assertMatch(user, UserTestData.user);
+    }
+
+    @Test
+    public void getNotOwn() {
+        Meal meal = service.getWithUser(MEAL1_ID, USER_ID);
         Assert.assertThrows(NotFoundException.class, () -> service.get(meal.id(), ADMIN_ID));
     }
 }

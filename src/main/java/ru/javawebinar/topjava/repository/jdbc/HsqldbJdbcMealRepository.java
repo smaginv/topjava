@@ -21,7 +21,7 @@ public class HsqldbJdbcMealRepository extends AbstractJdbcMealRepository<Timesta
     }
 
     @Override
-    protected Timestamp getDateForProfile(LocalDateTime localDateTime) {
+    protected Timestamp convertDateForProfile(LocalDateTime localDateTime) {
         return Timestamp.valueOf(localDateTime);
     }
 }
