@@ -1,10 +1,10 @@
 package ru.javawebinar.topjava.service.jdbc;
 
 import org.springframework.test.context.ActiveProfiles;
-import ru.javawebinar.topjava.service.MealServiceTest;
+import ru.javawebinar.topjava.service.UserServiceTest;
 
 import static ru.javawebinar.topjava.Profiles.JDBC;
 
 @ActiveProfiles(JDBC)
-public class JDBCMealServiceTest extends MealServiceTest {
+public class JdbcUserServiceTest extends UserServiceTest {
 }

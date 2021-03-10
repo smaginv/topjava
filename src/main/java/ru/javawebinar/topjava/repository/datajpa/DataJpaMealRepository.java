@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,14 +20,14 @@ public class DataJpaMealRepository implements MealRepository {
     }
 
     @Override
+    @Transactional
     public Meal save(Meal meal, int userId) {
-        meal.setUser(crudUserRepository.getOne(userId));
-        if (meal.isNew()) {
+        if (meal.isNew() || get(meal.getId(), userId) != null) {
+            meal.setUser(crudUserRepository.getOne(userId));
             return crudMealRepository.save(meal);
-        } else if (get(meal.getId(), userId) == null) {
+        } else {
             return null;
         }
-        return crudMealRepository.save(meal);
     }
 
     @Override
@@ -41,15 +42,16 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        return crudMealRepository.getAllByUserIdOrderByDateTimeDesc(userId);
+        return crudMealRepository.getAll(userId);
     }
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        return crudMealRepository.getAllByDateTimeGreaterThanEqualAndDateTimeLessThanAndUserIdOrderByDateTimeDesc(startDateTime, endDateTime, userId);
+        return crudMealRepository.getBetweenHalfOpen(userId, startDateTime, endDateTime);
     }
 
-    public Meal getMealByIdWithUser(int id, int userId) {
-        return crudMealRepository.getMealByIdWithUser(id, userId);
+    @Override
+    public Meal getWithUser(int id, int userId) {
+        return crudMealRepository.getWithUser(id, userId);
     }
 }
