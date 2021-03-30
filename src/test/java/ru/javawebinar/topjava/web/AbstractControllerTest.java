@@ -15,6 +15,8 @@ import ru.javawebinar.topjava.AllActiveProfileResolver;
 
 import javax.annotation.PostConstruct;
 
+import static ru.javawebinar.topjava.Profiles.DATAJPA;
+
 @SpringJUnitWebConfig(locations = {
         "classpath:spring/spring-app.xml",
         "classpath:spring/spring-mvc.xml",
@@ -51,5 +53,9 @@ public abstract class AbstractControllerTest {
 
     protected ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return mockMvc.perform(builder);
+    }
+
+    protected boolean isDataJpa() {
+        return environment.acceptsProfiles(org.springframework.core.env.Profiles.of(DATAJPA));
     }
 }

@@ -20,7 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.MEAL_MATCHER;
 import static ru.javawebinar.topjava.MealTestData.meals;
-import static ru.javawebinar.topjava.Profiles.DATAJPA;
 import static ru.javawebinar.topjava.TestUtil.readFromJson;
 import static ru.javawebinar.topjava.UserTestData.*;
 
@@ -93,8 +92,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getWithMeals() throws Exception {
-        Assumptions.assumeTrue(environment.acceptsProfiles(org.springframework.core.env.Profiles.of(DATAJPA)),
-                "getWithMeals DataJPA only");
+        Assumptions.assumeTrue(isDataJpa(), "getWithMeals DataJPA only");
         ResultActions actions = perform(MockMvcRequestBuilders.get(REST_URL + USER_ID + "/with-meals"))
                 .andDo(print())
                 .andExpect(status().isOk())
