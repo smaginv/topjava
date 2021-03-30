@@ -29,7 +29,6 @@ import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 class MealRestControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL = MealRestController.REST_URL + '/';
-    private static final String FILTER_URL = "filter?startDate=%s&endDate=%s&startTime=%s&endTime=%s";
 
     @Autowired
     private MealService mealService;
@@ -88,10 +87,32 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBetween() throws Exception {
+        List<MealTo> expected = getTos(List.of(meal2, meal1), authUserCaloriesPerDay());
+        perform(MockMvcRequestBuilders.get(REST_URL +
+                "filter?startDate=2020-01-30&endDate=2020-01-30&startTime=10:00&endTime=20:00"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_TO_MATCHER.contentJson(expected));
+    }
+
+    @Test
+    void getBetweenWithNullParam() throws Exception {
+        List<MealTo> expected = getTos(meals, authUserCaloriesPerDay());
+        perform(MockMvcRequestBuilders.get(REST_URL +
+                "filter?startDate=&startTime"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_TO_MATCHER.contentJson(expected));
+    }
+
+    @Test
+    void getBetweenWithParam() throws Exception {
         List<MealTo> expected = getTos(List.of(meal3, meal2, meal1), authUserCaloriesPerDay());
-        perform(MockMvcRequestBuilders.get(REST_URL + String.format(FILTER_URL,
-                FROM_INCLUDING.toLocalDate(), BEFORE_EXCLUDING.toLocalDate(),
-                FROM_INCLUDING.toLocalTime(), BEFORE_EXCLUDING.toLocalTime())))
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter?")
+                .param("startDate", "")
+                .param("endDate", "2020-01-30"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
