@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.web.user;
 
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -7,7 +8,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.TestUtil;
 import ru.javawebinar.topjava.UserTestData;
-import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.MEAL_MATCHER;
 import static ru.javawebinar.topjava.MealTestData.meals;
+import static ru.javawebinar.topjava.Profiles.DATAJPA;
 import static ru.javawebinar.topjava.TestUtil.readFromJson;
 import static ru.javawebinar.topjava.UserTestData.*;
 
@@ -92,15 +93,16 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getWithMeals() throws Exception {
+        Assumptions.assumeTrue(environment.acceptsProfiles(org.springframework.core.env.Profiles.of(DATAJPA)),
+                "getWithMeals DataJPA only");
         ResultActions actions = perform(MockMvcRequestBuilders.get(REST_URL + USER_ID + "/with-meals"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(USER_MATCHER.contentJson(user));
 
-        StringBuilder content = new StringBuilder(TestUtil.getContent(actions.andReturn()));
-        String json = content.substring(content.lastIndexOf("["), content.lastIndexOf("]") + 1);
-
-        MEAL_MATCHER.assertMatch(JsonUtil.readValues(json, Meal.class), meals);
+        String content = TestUtil.getContent(actions.andReturn());
+        User user = JsonUtil.readValue(content, User.class);
+        MEAL_MATCHER.assertMatch(user.getMeals(), meals);
     }
 }
