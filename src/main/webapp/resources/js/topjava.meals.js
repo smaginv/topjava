@@ -45,11 +45,11 @@ function filter() {
         url: ctx.ajaxUrl + "filter",
         data: filterForm.serialize()
     }).done(function (data) {
-        ctx.datatableApi.clear().rows.add(data).draw()
+        redrawTable(data);
     });
 }
 
 function clearFilter() {
-    filterForm.find(":input").val("");
+    filterForm[0].reset();
     updateTable();
 }
